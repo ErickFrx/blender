@@ -23,7 +23,8 @@ jobs:
       - name: Instalar Blender en GitHub
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends blender
+          sudo apt-get install -y --no-install-recommends blender python3-numpy
+          blender --background --factory-startup --python-expr 'import numpy; print("NUMPY_OK", numpy.__version__)'
           blender --version | head -n 3
 
       - name: Generar fachadas y capturas
