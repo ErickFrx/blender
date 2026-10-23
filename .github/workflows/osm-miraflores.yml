@@ -1,0 +1,25 @@
+name: Cartografía real Miraflores OSM
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tools/fetch_miraflores_osm.py
+      - .github/workflows/osm-miraflores.yml
+permissions:
+  contents: read
+jobs:
+  mapa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consultar Overpass y validar cobertura
+        run: python3 tools/fetch_miraflores_osm.py
+      - name: Publicar recorte cartográfico ODbL
+        uses: actions/upload-artifact@v4
+        with:
+          name: miraflores-kennedy-osm-real
+          path: output/miraflores_kennedy_osm.json
+          if-no-files-found: error
+          retention-days: 14
