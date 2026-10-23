@@ -84,6 +84,7 @@ def set_scene(kind):
 def make_preview(path):
     s=bpy.context.scene
     s.render.engine="CYCLES";s.cycles.samples=12
+    bpy.context.view_layer.cycles.use_denoising=False
     s.render.resolution_x=720;s.render.resolution_y=480;s.render.resolution_percentage=100
     world=bpy.data.worlds.new("sky");world.use_nodes=True;s.world=world
     world.node_tree.nodes["Background"].inputs["Color"].default_value=(.65,.77,.95,1)
