@@ -15,11 +15,11 @@ for a in assets:
     assert (magic,version,length)==(b"glTF",2,len(raw))
     chunk_length,kind=struct.unpack_from("<I4s",raw,12)
     assert kind==b"JSON"
-    data=json.loads(raw[20:20+chunk_length].decode("utf-8").rstrip(" \\x00"))
+    data=json.loads(raw[20:20+chunk_length].decode("utf-8").rstrip(" "))
     assert data["meshes"] and len(data["meshes"])>=30
     assert len(data["materials"])>=4
     img=png.read_bytes()
-    assert len(img)>10000 and img[:8]==b"\\x89PNG\\r\\n\\x1a\\n"
+    assert len(img)>10000 and img[:8]==bytes((137,80,78,71,13,10,26,10))
     w,h=struct.unpack_from(">II",img,16)
     assert w>=640 and h>=400
     print(f"VALIDATED {glb.name}: {len(data['meshes'])} meshes, {len(data['materials'])} materials; {png.name} {w}x{h}")
