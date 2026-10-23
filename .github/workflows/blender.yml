@@ -1,0 +1,45 @@
+name: Blender para PERÚ RACING
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/**'
+      - 'tests/**'
+      - '.github/workflows/blender.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  construir:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Blender en GitHub
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends blender
+          blender --version | head -n 3
+
+      - name: Generar fachadas y capturas
+        run: |
+          mkdir -p output
+          blender --background --factory-startup --python tools/generar_fachadas.py -- --output output
+
+      - name: Comprobar GLB y PNG
+        run: |
+          python3 tests/validar.py
+
+      - name: Guardar los archivos para descargar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: peru-racing-modelos-3d
+          path: output/
+          if-no-files-found: warn
+          retention-days: 14
